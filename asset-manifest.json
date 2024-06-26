@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/lol-team-build/static/css/main.ff02f4b5.css",
-    "main.js": "/lol-team-build/static/js/main.f899bfe7.js",
+    "main.js": "/lol-team-build/static/js/main.928f8bac.js",
     "static/js/453.b8b23dad.chunk.js": "/lol-team-build/static/js/453.b8b23dad.chunk.js",
     "index.html": "/lol-team-build/index.html",
     "main.ff02f4b5.css.map": "/lol-team-build/static/css/main.ff02f4b5.css.map",
-    "main.f899bfe7.js.map": "/lol-team-build/static/js/main.f899bfe7.js.map",
+    "main.928f8bac.js.map": "/lol-team-build/static/js/main.928f8bac.js.map",
     "453.b8b23dad.chunk.js.map": "/lol-team-build/static/js/453.b8b23dad.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ff02f4b5.css",
-    "static/js/main.f899bfe7.js"
+    "static/js/main.928f8bac.js"
   ]
 }
