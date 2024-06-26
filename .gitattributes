@@ -1,0 +1,7 @@
+# .gitattributes
+
+# Normalize all files to use LF (Unix-style) line endings
+* text=auto eol=lf
+
+# Explicitly declare files that should always use CRLF on checkout
+*.md text eol=crlf
