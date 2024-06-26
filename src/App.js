@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Button, Row, Col, Form } from 'react-bootstrap';
 import TeamForm from './components/TeamForm';
 import TeamList from './components/TeamList';
+import TeamDisplayList from './components/TeamDisplayList';
 import { distributeTeams } from './utils/teamUtils';
 
 const App = () => {
@@ -140,11 +141,11 @@ const splitTeams = () => {
       <Row>
         <Col>
           <h2>팀 1 (총 실력: {team1SkillTotal})</h2>
-          <TeamList members={team1} removeMember={() => {}} updateMember={() => {}} />
+          <TeamDisplayList members={team1} removeMember={() => {}} updateMember={() => {}} />
         </Col>
         <Col>
           <h2>팀 2 (총 실력: {team2SkillTotal})</h2>
-          <TeamList members={team2} removeMember={() => {}} updateMember={() => {}} />
+          <TeamDisplayList members={team2} removeMember={() => {}} updateMember={() => {}} />
         </Col>
       </Row>
       <Row>
@@ -160,6 +161,8 @@ const splitTeams = () => {
               </option>
             ))}
           </select>
+        </Col>
+        <Col>
           <Button onClick={() => swapPlayers(selectedPosition)} className="mt-3">
             교환
           </Button>

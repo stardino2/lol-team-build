@@ -1,9 +1,9 @@
 // TeamList.js
 
 import React, { useState } from 'react';
-import { Table, Form } from 'react-bootstrap';
+import { Button, Table, Form } from 'react-bootstrap';
 
-const TeamList = ({ members, updateMember }) => {
+const TeamList = ({ members, removeMember, updateMember }) => {
   const [editingMember, setEditingMember] = useState(null);
 
   const handleEdit = (member) => {
@@ -29,9 +29,10 @@ const TeamList = ({ members, updateMember }) => {
     <Table striped bordered hover className="mt-3">
       <thead>
         <tr>
-          <th>이름</th>
-          <th>포지션</th>
-          <th>실력</th>
+          <th style={{ width: '40%' }}>이름</th>
+          <th style={{ width: '20%' }}>포지션</th>
+          <th style={{ width: '20%' }}>실력</th>
+          <th style={{ width: '20%' }}>삭제</th>
         </tr>
       </thead>
       <tbody>
@@ -74,6 +75,9 @@ const TeamList = ({ members, updateMember }) => {
                   <option key={level} value={level}>{level}</option>
                 ))}
               </Form.Control>
+            </td>
+            <td>
+              <Button variant="danger" onClick={() => removeMember(index)}>삭제</Button>
             </td>
           </tr>
         ))}
