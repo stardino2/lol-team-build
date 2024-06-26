@@ -1,9 +1,9 @@
 // TeamList.js
 
 import React, { useState } from 'react';
-import { Button, Table, Form } from 'react-bootstrap';
+import { Table, Form } from 'react-bootstrap';
 
-const TeamList = ({ members, removeMember, updateMember }) => {
+const TeamList = ({ members, updateMember }) => {
   const [editingMember, setEditingMember] = useState(null);
 
   const handleEdit = (member) => {
@@ -32,7 +32,6 @@ const TeamList = ({ members, removeMember, updateMember }) => {
           <th>이름</th>
           <th>포지션</th>
           <th>실력</th>
-          <th>삭제</th>
         </tr>
       </thead>
       <tbody>
@@ -75,9 +74,6 @@ const TeamList = ({ members, removeMember, updateMember }) => {
                   <option key={level} value={level}>{level}</option>
                 ))}
               </Form.Control>
-            </td>
-            <td>
-              <Button variant="danger" onClick={() => removeMember(index)}>삭제</Button>
             </td>
           </tr>
         ))}

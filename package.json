@@ -42,5 +42,6 @@
   },
   "devDependencies": {
     "gh-pages": "^6.1.1"
-  }
+  },
+  "homepage": "https://stardino2.github.io/lol-team-build/"
 }
