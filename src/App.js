@@ -1,7 +1,7 @@
 // App.js
 
 // 필요한 React 기능과 외부 라이브러리 컴포넌트들을 가져옵니다.
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Container, Button, Row, Col, Form } from "react-bootstrap";
 
 // 사용자 정의 컴포넌트들을 가져옵니다.
@@ -35,55 +35,63 @@ const App = () => {
   const [team2SkillTotal, setTeam2SkillTotal] = useState(0);
 
   // 가능한 모든 포지션들의 리스트
-  const requiredPositions = ["탑", "정글", "미드", "원딜", "서폿", "칼바람"];
+  const requiredPositions = ["탑", "정글", "미드", "원딜", "서폿"];
 
   // useEffect: 컴포넌트가 처음 렌더링될 때 실행되는 함수
   useEffect(() => {
     // 초기 멤버 리스트를 설정합니다.
     const initialMembers = [
-      { name: "1", position: "탑", skill: 1 },
-      { name: "2", position: "탑", skill: 1 },
-      { name: "3", position: "정글", skill: 1 },
-      { name: "4", position: "정글", skill: 1 },
-      { name: "5", position: "미드", skill: 1 },
-      { name: "6", position: "미드", skill: 1 },
-      { name: "7", position: "원딜", skill: 1 },
-      { name: "8", position: "원딜", skill: 1 },
-      { name: "9", position: "서폿", skill: 1 },
-      { name: "10", position: "서폿", skill: 1 },
+      { id: "1", name: "1", position: "탑", skill: 1 },
+      { id: "2", name: "2", position: "탑", skill: 1 },
+      { id: "3", name: "3", position: "정글", skill: 1 },
+      { id: "4", name: "4", position: "정글", skill: 1 },
+      { id: "5", name: "5", position: "미드", skill: 1 },
+      { id: "6", name: "6", position: "미드", skill: 1 },
+      { id: "7", name: "7", position: "원딜", skill: 1 },
+      { id: "8", name: "8", position: "원딜", skill: 1 },
+      { id: "9", name: "9", position: "서폿", skill: 1 },
+      { id: "10", name: "10", position: "서폿", skill: 1 },
     ];
     setMembers(initialMembers);
   }, []); // 빈 배열은 이 효과가 컴포넌트 마운트 시에만 실행됨을 의미합니다.
 
   // 새 멤버를 추가하는 함수
-  const addMember = (member) => {
-    // 멤버가 10명 미만일 때만 새 멤버를 추가합니다.
-    if (members.length < 10) {
-      setMembers([...members, member]);
-    } else {
-      alert("최대 10명까지만 입력할 수 있습니다.");
-    }
-  };
+  const addMember = useCallback((member) => {
+    setMembers((prevMembers) => {
+      if (prevMembers.length < 10) {
+        // 새 멤버에 고유 id를 부여하고 기존 멤버 리스트에 추가합니다.
+        return [...prevMembers, { ...member, id: Date.now().toString() }];
+      } else {
+        alert("최대 10명까지만 입력할 수 있습니다.");
+        return prevMembers;
+      }
+    });
+  }, []);
 
-  // 특정 인덱스의 멤버를 제거하는 함수
-  const removeMember = (index) => {
-    setMembers(members.filter((_, i) => i !== index));
-  };
+  // 특정 id의 멤버를 제거하는 함수
+  const removeMember = useCallback((id) => {
+    setMembers((prevMembers) =>
+      prevMembers.filter((member) => member.id !== id)
+    );
+  }, []);
 
-  // 특정 인덱스의 멤버 정보를 업데이트하는 함수
-  const updateMember = (index, updatedMember) => {
-    const newMembers = [...members];
-    newMembers[index] = updatedMember;
-    setMembers(newMembers);
-  };
+  // 특정 id의 멤버 정보를 업데이트하는 함수
+  const updateMember = useCallback((id, updatedMember) => {
+    setMembers((prevMembers) =>
+      prevMembers.map((member) =>
+        member.id === id ? { ...member, ...updatedMember } : member
+      )
+    );
+  }, []);
 
   // 모든 멤버를 제거하는 함수
-  const removeAllMembers = () => {
+  const removeAllMembers = useCallback(() => {
     setMembers([]);
-  };
+  }, []);
 
   // 팀을 나누는 함수
   const splitTeams = () => {
+    // 현재 게임 모드에 따라 필요한 팀 크기를 결정합니다.
     const requiredTeamSize = gameMode === "4인" ? 4 : 5;
 
     // 게임 모드에 따라 필요한 포지션 설정
@@ -98,6 +106,7 @@ const App = () => {
       );
     }
 
+    // 멤버 수가 충분한지 확인
     if (members.length < requiredTeamSize * 2) {
       alert(`각 팀에 ${requiredTeamSize}명씩 포함되어야 합니다.`);
       return;
@@ -183,7 +192,7 @@ const App = () => {
   // 컴포넌트의 UI를 렌더링
   return (
     <Container>
-      <h1>롤 팀짜기 by 귀뭉이</h1>
+      <h1>롤 팀짜기 프로그램</h1>
 
       {/* 새 멤버 입력 폼 */}
       <TeamForm addMember={addMember} positions={requiredPositions} />
@@ -231,15 +240,12 @@ const App = () => {
         </Col>
       </Row>
 
-      {/* 팀1과 팀2 멤버 목록을 하나의 Row에 배치 */}
+      {/* 팀1과 팀2 멤버 목록 */}
       <Row>
-        {/* 팀1 멤버 목록 */}
         <Col md={6}>
           <h2>팀 1 (총 실력: {team1SkillTotal})</h2>
           <TeamDisplayList members={team1} />
         </Col>
-
-        {/* 팀2 멤버 목록 */}
         <Col md={6}>
           <h2>팀 2 (총 실력: {team2SkillTotal})</h2>
           <TeamDisplayList members={team2} />

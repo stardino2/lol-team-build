@@ -1,36 +1,57 @@
 // TeamList.js
 
-// React와 필요한 React Bootstrap 컴포넌트들을 가져옵니다.
-import React, { useState } from 'react';
-import { Button, Table, Form } from 'react-bootstrap';
+import React, { useState, useCallback } from "react";
+import { Button, Table, Form } from "react-bootstrap";
 
-// TeamList 컴포넌트: 멤버 목록을 표시하고 편집할 수 있게 합니다.
-// props로 members 배열, removeMember 함수, updateMember 함수를 받습니다.
 const TeamList = ({ members, removeMember, updateMember }) => {
-  // 현재 편집 중인 멤버의 상태를 관리합니다.
-  const [editingMember, setEditingMember] = useState(null);
+  // 각 멤버의 현재 입력 값을 저장하는 상태
+  const [editingMembers, setEditingMembers] = useState({});
 
-  // 멤버 편집을 시작하는 함수
-  const handleEdit = (member) => {
-    setEditingMember({ ...member });
-  };
+  // 멤버 편집을 시작할 때 호출되는 함수
+  const handleEdit = useCallback((member) => {
+    setEditingMembers((prev) => ({
+      ...prev,
+      [member.id]: { ...member },
+    }));
+  }, []);
 
-  // 멤버 편집을 저장하는 함수
-  const handleSave = () => {
-    updateMember(members.findIndex(m => m.name === editingMember.name), editingMember);
-    setEditingMember(null);
-  };
-
-  // 멤버 정보 변경을 처리하는 함수
-  const handleChange = (e, member) => {
+  // 멤버 정보가 변경될 때 호출되는 함수
+  const handleChange = useCallback((e, memberId) => {
     const { name, value } = e.target;
-    if (editingMember && editingMember.name === member.name) {
-      setEditingMember({ ...editingMember, [name]: name === 'skill' ? parseInt(value) : value });
-    } else {
-      const updatedMember = { ...member, [name]: name === 'skill' ? parseInt(value) : value };
-      updateMember(members.indexOf(member), updatedMember);
-    }
-  };
+    setEditingMembers((prev) => ({
+      ...prev,
+      [memberId]: {
+        ...prev[memberId],
+        [name]: name === "skill" ? parseInt(value) : value,
+      },
+    }));
+  }, []);
+
+  // 멤버 편집을 완료할 때 호출되는 함수
+  const handleSave = useCallback(
+    (memberId) => {
+      const editedMember = editingMembers[memberId];
+      if (editedMember) {
+        updateMember(memberId, editedMember);
+        setEditingMembers((prev) => {
+          const newState = { ...prev };
+          delete newState[memberId];
+          return newState;
+        });
+      }
+    },
+    [editingMembers, updateMember]
+  );
+
+  // 멤버의 현재 값을 가져오는 함수
+  const getMemberValue = useCallback(
+    (member, field) => {
+      return editingMembers[member.id]
+        ? editingMembers[member.id][field]
+        : member[field];
+    },
+    [editingMembers]
+  );
 
   return (
     <Table striped bordered hover className="mt-3">
@@ -43,52 +64,54 @@ const TeamList = ({ members, removeMember, updateMember }) => {
         </tr>
       </thead>
       <tbody>
-        {members.map((member, index) => (
-          <tr key={index}>
+        {members.map((member) => (
+          <tr key={member.id}>
             <td>
-              {/* 이름 입력 필드 */}
               <Form.Control
                 type="text"
                 name="name"
-                value={editingMember && editingMember.name === member.name ? editingMember.name : member.name}
-                onChange={(e) => handleChange(e, member)}
+                value={getMemberValue(member, "name")}
+                onChange={(e) => handleChange(e, member.id)}
                 onFocus={() => handleEdit(member)}
-                onBlur={handleSave}
+                onBlur={() => handleSave(member.id)}
               />
             </td>
             <td>
-              {/* 포지션 선택 드롭다운 */}
               <Form.Control
                 as="select"
                 name="position"
-                value={editingMember && editingMember.name === member.name ? editingMember.position : member.position}
-                onChange={(e) => handleChange(e, member)}
+                value={getMemberValue(member, "position")}
+                onChange={(e) => handleChange(e, member.id)}
                 onFocus={() => handleEdit(member)}
-                onBlur={handleSave}
+                onBlur={() => handleSave(member.id)}
               >
-                {['탑', '정글', '미드', '원딜', '서폿', '칼바람'].map(pos => (
-                  <option key={pos} value={pos}>{pos}</option>
+                {["탑", "정글", "미드", "원딜", "서폿"].map((pos) => (
+                  <option key={pos} value={pos}>
+                    {pos}
+                  </option>
                 ))}
               </Form.Control>
             </td>
             <td>
-              {/* 실력 선택 드롭다운 */}
               <Form.Control
                 as="select"
                 name="skill"
-                value={editingMember && editingMember.name === member.name ? editingMember.skill : member.skill}
-                onChange={(e) => handleChange(e, member)}
+                value={getMemberValue(member, "skill")}
+                onChange={(e) => handleChange(e, member.id)}
                 onFocus={() => handleEdit(member)}
-                onBlur={handleSave}
+                onBlur={() => handleSave(member.id)}
               >
-                {[1, 2, 3].map(level => (
-                  <option key={level} value={level}>{level}</option>
+                {[1, 2, 3].map((level) => (
+                  <option key={level} value={level}>
+                    {level}
+                  </option>
                 ))}
               </Form.Control>
             </td>
             <td>
-              {/* 삭제 버튼 */}
-              <Button variant="danger" onClick={() => removeMember(index)}>삭제</Button>
+              <Button variant="danger" onClick={() => removeMember(member.id)}>
+                삭제
+              </Button>
             </td>
           </tr>
         ))}
