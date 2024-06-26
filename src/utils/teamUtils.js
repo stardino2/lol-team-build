@@ -1,12 +1,14 @@
 // utils/teamUtils.js
 
+// distributeTeams 함수: 팀을 나누는 로직을 구현합니다.
 export const distributeTeams = (positions, positionGroups) => {
   let team1 = [];
   let team2 = [];
   
+  // 각 포지션별로 선수를 팀에 분배합니다.
   positions.forEach(position => {
     const players = positionGroups[position] || [];
-    players.sort((a, b) => b.skill - a.skill);
+    players.sort((a, b) => b.skill - a.skill);  // 실력 순으로 정렬
     
     for (let i = 0; i < players.length; i++) {
       if (i % 2 === 0) {
@@ -38,4 +40,24 @@ export const distributeTeams = (positions, positionGroups) => {
   }
 
   return { newTeam1: team1, newTeam2: team2 };
+};
+
+// distributeARAMTeams 함수: 칼바람 모드에서 팀을 나누는 로직을 구현합니다.
+export const distributeARAMTeams = (members) => {
+  // 멤버들을 실력 순으로 정렬
+  const sortedMembers = [...members].sort((a, b) => b.skill - a.skill);
+  
+  const team1 = [];
+  const team2 = [];
+  
+  // 지그재그로 팀 분배
+  sortedMembers.forEach((member, index) => {
+    if (index % 2 === 0) {
+      team1.push(member);
+    } else {
+      team2.push(member);
+    }
+  });
+  
+  return { team1, team2 };
 };
