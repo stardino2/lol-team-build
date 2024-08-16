@@ -192,7 +192,7 @@ const App = () => {
   // 컴포넌트의 UI를 렌더링
   return (
     <Container>
-      <h1>롤 팀짜기 프로그램</h1>
+      <h1>롤 팀짜기 by 귀뭉이</h1>
 
       {/* 새 멤버 입력 폼 */}
       <TeamForm addMember={addMember} positions={requiredPositions} />

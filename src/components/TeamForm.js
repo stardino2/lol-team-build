@@ -41,7 +41,7 @@ const TeamForm = ({ addMember, positions }) => (
             <Col>
               {/* 실력 선택 드롭다운 */}
               <Field as="select" name="skill" className="form-control">
-                {[1, 2, 3].map((level) => (
+                {[1, 2, 3, 4, 5].map((level) => (
                   <option key={level} value={level}>
                     {level}
                   </option>
