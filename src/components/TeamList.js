@@ -101,7 +101,7 @@ const TeamList = ({ members, removeMember, updateMember }) => {
                 onFocus={() => handleEdit(member)}
                 onBlur={() => handleSave(member.id)}
               >
-                {[1, 2, 3].map((level) => (
+                {[1, 2, 3, 4, 5].map((level) => (
                   <option key={level} value={level}>
                     {level}
                   </option>
